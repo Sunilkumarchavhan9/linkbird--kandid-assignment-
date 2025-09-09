@@ -4,11 +4,13 @@ import { db } from "@/lib/db/client";
 import * as authSchema from "@/lib/db/auth-schema";
 
 function resolveBaseURL() {
-	return (
+	const baseURL = (
 		process.env.BETTER_AUTH_URL ||
 		process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
 		(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
 	);
+	console.log("Better Auth Base URL:", baseURL);
+	return baseURL;
 }
 
 function resolveSecret() {
@@ -30,11 +32,15 @@ export const auth = betterAuth({
 		crossSubdomainCookies: {
 			enabled: true,
 		},
+		disableSignUp: false,
 	},
 	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",
 		schema: authSchema,
-	}) : undefined,
+	}) : {
+		provider: "sqlite",
+		url: ":memory:",
+	},
 	emailAndPassword: {
 		enabled: true,
 	},
