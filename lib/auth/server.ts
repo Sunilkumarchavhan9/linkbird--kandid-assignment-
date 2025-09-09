@@ -17,7 +17,8 @@ function resolveSecret() {
 	return process.env.BETTER_AUTH_SECRET || "dev-insecure-secret-change-me";
 }
 
-export const auth = betterAuth({
+// Create auth configuration conditionally
+const authConfig = {
 	baseURL: resolveBaseURL(),
 	secret: resolveSecret(),
 	trustedOrigins: [
@@ -38,13 +39,6 @@ export const auth = betterAuth({
 		skipCSRFCheck: true,
 		skipOriginCheck: true,
 	},
-	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
-		provider: "pg",
-		schema: authSchema,
-	}) : {
-		provider: "sqlite",
-		url: ":memory:",
-	},
 	emailAndPassword: {
 		enabled: true,
 	},
@@ -55,4 +49,14 @@ export const auth = betterAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 		},
 	},
-});
+};
+
+// Only add database if DATABASE_URL is available
+if (process.env.DATABASE_URL) {
+	(authConfig as any).database = drizzleAdapter(db, {
+		provider: "pg",
+		schema: authSchema,
+	});
+}
+
+export const auth = betterAuth(authConfig);
