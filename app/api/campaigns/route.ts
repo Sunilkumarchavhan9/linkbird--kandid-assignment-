@@ -7,42 +7,61 @@ import { and, asc, desc, eq, ilike, sql } from "drizzle-orm";
 export async function GET(req: NextRequest) {
     // If no database URL, return mock data
     if (!process.env.DATABASE_URL) {
-        const mockCampaigns = [
-            {
-                id: 1,
-                name: "Summer Campaign 2024",
-                status: "active",
-                ownerId: "user-1",
-                totalLeads: 150,
-                successfulLeads: 45,
-                createdAt: new Date("2024-01-15"),
-                responseRate: 30,
-            },
-            {
-                id: 2,
-                name: "Product Launch",
-                status: "draft",
-                ownerId: "user-1",
-                totalLeads: 0,
-                successfulLeads: 0,
-                createdAt: new Date("2024-01-20"),
-                responseRate: 0,
-            },
-            {
-                id: 3,
-                name: "Holiday Special",
-                status: "completed",
-                ownerId: "user-1",
-                totalLeads: 200,
-                successfulLeads: 80,
-                createdAt: new Date("2023-12-01"),
-                responseRate: 40,
-            },
+        const { searchParams } = new URL(req.url);
+        const limit = parseInt(searchParams.get("limit") || "20");
+        const cursor = parseInt(searchParams.get("cursor") || "0");
+        const status = searchParams.get("status");
+        
+        // Generate 1000+ mock campaigns
+        const campaignNames = [
+            "Summer Campaign 2024", "Product Launch", "Holiday Special", "Black Friday Sale",
+            "New Year Campaign", "Valentine's Day", "Spring Collection", "Summer Sale",
+            "Back to School", "Halloween Special", "Christmas Campaign", "Winter Collection",
+            "Easter Promotion", "Mother's Day", "Father's Day", "Independence Day",
+            "Labor Day Sale", "Thanksgiving Special", "Cyber Monday", "Year End Clearance",
+            "Tech Innovation", "Fashion Forward", "Health & Wellness", "Fitness Challenge",
+            "Beauty Revolution", "Skincare Essentials", "Hair Care", "Makeup Mastery",
+            "Fragrance Collection", "Luxury Items", "Budget Friendly", "Premium Quality",
+            "Eco Friendly", "Sustainable Living", "Organic Products", "Natural Beauty",
+            "Digital Marketing", "Social Media", "Email Campaign", "Content Marketing",
+            "SEO Optimization", "PPC Campaign", "Influencer Marketing", "Affiliate Program",
+            "Customer Retention", "Loyalty Program", "Referral Bonus", "Welcome Offer",
+            "Flash Sale", "Limited Time", "Exclusive Deal", "Member Only",
+            "Early Bird", "Pre Order", "Launch Special", "Anniversary Sale"
         ];
+        
+        const statuses = ["active", "draft", "completed", "paused"];
+        const totalCampaigns = 1000;
+        const startId = cursor || 1;
+        const endId = Math.min(startId + limit, totalCampaigns);
+        
+        const mockCampaigns = [];
+        for (let i = startId; i <= endId; i++) {
+            const name = campaignNames[i % campaignNames.length] + ` ${Math.floor(i / campaignNames.length) + 1}`;
+            const campaignStatus = statuses[i % statuses.length];
+            const totalLeads = Math.floor(Math.random() * 500) + 50;
+            const successfulLeads = Math.floor(totalLeads * (Math.random() * 0.6 + 0.1));
+            const responseRate = totalLeads ? Math.round((successfulLeads / totalLeads) * 100) : 0;
+            
+            // Filter by status if specified
+            if (status && campaignStatus !== status) continue;
+            
+            mockCampaigns.push({
+                id: i,
+                name,
+                status: campaignStatus,
+                ownerId: "user-1",
+                totalLeads,
+                successfulLeads,
+                createdAt: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+                responseRate,
+            });
+        }
 
+        const nextCursor = endId < totalCampaigns ? endId + 1 : null;
         return NextResponse.json({ 
             items: mockCampaigns, 
-            nextCursor: null 
+            nextCursor 
         });
     }
 

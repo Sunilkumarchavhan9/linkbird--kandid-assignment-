@@ -7,10 +7,10 @@ export async function GET(req: NextRequest) {
     // If no database URL, return mock data
     if (!process.env.DATABASE_URL) {
         return NextResponse.json({
-            campaigns: 3,
-            totalLeads: 350,
-            successfulLeads: 125,
-            responseRate: 36,
+            campaigns: 1000,
+            totalLeads: 250000,
+            successfulLeads: 87500,
+            responseRate: 35,
         });
     }
 
