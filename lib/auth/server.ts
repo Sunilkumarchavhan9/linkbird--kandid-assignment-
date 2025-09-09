@@ -24,6 +24,7 @@ export const auth = betterAuth({
 		"http://localhost:3000",
 		"https://localhost:3000",
 		"https://linkbird-s.vercel.app",
+		"https://*.vercel.app",
 		...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
 		...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
 	],
