@@ -21,9 +21,16 @@ export const auth = betterAuth({
 	trustedOrigins: [
 		"http://localhost:3000",
 		"https://localhost:3000",
+		"https://linkbird-s.vercel.app",
 		...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
 		...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
 	],
+	advanced: {
+		generateId: () => crypto.randomUUID(),
+		crossSubdomainCookies: {
+			enabled: true,
+		},
+	},
 	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",
 		schema: authSchema,

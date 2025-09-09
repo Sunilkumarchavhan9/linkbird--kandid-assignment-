@@ -6,7 +6,7 @@ const resolvedBaseUrl = typeof window !== "undefined"
   ? `${window.location.origin}/api/auth`
   : (process.env.NEXT_PUBLIC_BETTER_AUTH_URL
       ? `${process.env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth`
-      : undefined);
+      : "http://localhost:3000/api/auth");
 
 export const authClient = createAuthClient({
     baseURL: resolvedBaseUrl,
