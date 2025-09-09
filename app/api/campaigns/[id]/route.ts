@@ -3,37 +3,40 @@ import { db } from "@/lib/db/client";
 import { campaigns } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-    const id = Number(params.id);
-    if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum) || idNum <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     const body = await req.json().catch(() => ({}));
     
     if (body?.action === "toggle") {
-        const current = await db.select({ status: campaigns.status }).from(campaigns).where(eq(campaigns.id, id)).limit(1);
+        const current = await db.select({ status: campaigns.status }).from(campaigns).where(eq(campaigns.id, idNum)).limit(1);
         if (!current.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
         const next = current[0].status === "paused" ? "active" : "paused" as const;
-        await db.update(campaigns).set({ status: next }).where(eq(campaigns.id, id));
+        await db.update(campaigns).set({ status: next }).where(eq(campaigns.id, idNum));
         return NextResponse.json({ ok: true, status: next });
     }
     if (typeof body?.name === "string" && body.name.trim().length > 0) {
-        await db.update(campaigns).set({ name: body.name.trim() }).where(eq(campaigns.id, id));
+        await db.update(campaigns).set({ name: body.name.trim() }).where(eq(campaigns.id, idNum));
         return NextResponse.json({ ok: true });
     }
     return NextResponse.json({ error: "Unsupported operation" }, { status: 400 });
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
-    const id = Number(params.id);
-    if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
-    await db.delete(campaigns).where(eq(campaigns.id, id));
+export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum) || idNum <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+    await db.delete(campaigns).where(eq(campaigns.id, idNum));
     return NextResponse.json({ ok: true });
 }
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-    const id = Number(params.id);
-    if (!Number.isInteger(id) || id <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const idNum = Number(id);
+    if (!Number.isInteger(idNum) || idNum <= 0) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     const row = await db.query.campaigns.findFirst({
-        where: eq(campaigns.id, id),
+        where: eq(campaigns.id, idNum),
         columns: {
             id: true,
             name: true,

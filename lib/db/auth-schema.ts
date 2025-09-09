@@ -1,7 +1,6 @@
 import { pgTable, text, timestamp, primaryKey, boolean } from "drizzle-orm/pg-core";
 
-// Minimal Better Auth-compatible tables
-// Adjust as needed if your Better Auth version expects more columns
+
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -53,7 +52,6 @@ export const verificationTokens = pgTable(
   })
 );
 
-// Aliases expected by Better Auth adapter
 export const user = users;
 export const account = accounts;
 export const session = sessions;
