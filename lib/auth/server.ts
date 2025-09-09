@@ -18,10 +18,10 @@ function resolveSecret() {
 export const auth = betterAuth({
 	baseURL: resolveBaseURL(),
 	secret: resolveSecret(),
-	database: drizzleAdapter(db, {
+	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",
 		schema: authSchema,
-	}),
+	}) : undefined,
 	emailAndPassword: {
 		enabled: true,
 	},
