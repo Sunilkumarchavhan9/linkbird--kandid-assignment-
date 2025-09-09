@@ -34,6 +34,7 @@ export const auth = betterAuth({
 			enabled: true,
 		},
 		disableSignUp: false,
+		skipCSRFCheck: true,
 	},
 	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",
