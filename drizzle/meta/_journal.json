@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1757324564486,
+      "tag": "0000_previous_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757326139750,
+      "tag": "0001_bright_supreme_intelligence",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757327637845,
+      "tag": "0002_yielding_the_fury",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1757327912289,
+      "tag": "0003_dazzling_tinkerer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1757329216804,
+      "tag": "0004_tidy_mulholland_black",
+      "breakpoints": true
+    }
+  ]
+}
