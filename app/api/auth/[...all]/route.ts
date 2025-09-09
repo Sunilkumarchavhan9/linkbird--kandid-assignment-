@@ -46,10 +46,15 @@ export const POST = async (req: NextRequest) => {
 	try {
 		const response = await handler.POST(req);
 		console.log("Auth POST response status:", response.status);
+		console.log("Auth POST response headers:", Object.fromEntries(response.headers.entries()));
 		return addCORSHeaders(response);
 	} catch (error) {
 		console.error("Auth POST error:", error);
-		return new NextResponse(JSON.stringify({ error: "Internal server error" }), {
+		console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+		return new NextResponse(JSON.stringify({ 
+			error: "Internal server error",
+			message: error instanceof Error ? error.message : "Unknown error"
+		}), {
 			status: 500,
 			headers: {
 				"Content-Type": "application/json",
