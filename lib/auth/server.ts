@@ -25,6 +25,7 @@ export const auth = betterAuth({
 		"https://localhost:3000",
 		"https://linkbird-s.vercel.app",
 		"https://*.vercel.app",
+		"*",
 		...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
 		...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
 	],
@@ -35,6 +36,7 @@ export const auth = betterAuth({
 		},
 		disableSignUp: false,
 		skipCSRFCheck: true,
+		skipOriginCheck: true,
 	},
 	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",

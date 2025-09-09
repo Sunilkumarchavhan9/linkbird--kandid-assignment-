@@ -14,20 +14,49 @@ const addCORSHeaders = (response: Response) => {
 	newResponse.headers.set("Access-Control-Allow-Origin", "*");
 	newResponse.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 	newResponse.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+	newResponse.headers.set("Access-Control-Allow-Credentials", "true");
 	
 	return newResponse;
 };
 
 export const GET = async (req: NextRequest) => {
 	console.log("Auth GET request from:", req.headers.get("origin"));
-	const response = await handler.GET(req);
-	return addCORSHeaders(response);
+	console.log("Auth GET request headers:", Object.fromEntries(req.headers.entries()));
+	
+	try {
+		const response = await handler.GET(req);
+		console.log("Auth GET response status:", response.status);
+		return addCORSHeaders(response);
+	} catch (error) {
+		console.error("Auth GET error:", error);
+		return new NextResponse(JSON.stringify({ error: "Internal server error" }), {
+			status: 500,
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			},
+		});
+	}
 };
 
 export const POST = async (req: NextRequest) => {
 	console.log("Auth POST request from:", req.headers.get("origin"));
-	const response = await handler.POST(req);
-	return addCORSHeaders(response);
+	console.log("Auth POST request headers:", Object.fromEntries(req.headers.entries()));
+	
+	try {
+		const response = await handler.POST(req);
+		console.log("Auth POST response status:", response.status);
+		return addCORSHeaders(response);
+	} catch (error) {
+		console.error("Auth POST error:", error);
+		return new NextResponse(JSON.stringify({ error: "Internal server error" }), {
+			status: 500,
+			headers: {
+				"Content-Type": "application/json",
+				"Access-Control-Allow-Origin": "*",
+			},
+		});
+	}
 };
 
 export const OPTIONS = async () => {
@@ -37,6 +66,7 @@ export const OPTIONS = async () => {
 			"Access-Control-Allow-Origin": "*",
 			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+			"Access-Control-Allow-Credentials": "true",
 		},
 	});
 };
