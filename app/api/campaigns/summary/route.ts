@@ -4,6 +4,16 @@ import { campaigns } from "@/lib/db/schema";
 import { and, count, eq, sum } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
+    // If no database URL, return mock data
+    if (!process.env.DATABASE_URL) {
+        return NextResponse.json({
+            campaigns: 3,
+            totalLeads: 350,
+            successfulLeads: 125,
+            responseRate: 36,
+        });
+    }
+
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId") || undefined;
 

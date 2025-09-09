@@ -5,6 +5,47 @@ import { CampaignsQuerySchema } from "@/lib/types/campaigns";
 import { and, asc, desc, eq, ilike, sql } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
+    // If no database URL, return mock data
+    if (!process.env.DATABASE_URL) {
+        const mockCampaigns = [
+            {
+                id: 1,
+                name: "Summer Campaign 2024",
+                status: "active",
+                ownerId: "user-1",
+                totalLeads: 150,
+                successfulLeads: 45,
+                createdAt: new Date("2024-01-15"),
+                responseRate: 30,
+            },
+            {
+                id: 2,
+                name: "Product Launch",
+                status: "draft",
+                ownerId: "user-1",
+                totalLeads: 0,
+                successfulLeads: 0,
+                createdAt: new Date("2024-01-20"),
+                responseRate: 0,
+            },
+            {
+                id: 3,
+                name: "Holiday Special",
+                status: "completed",
+                ownerId: "user-1",
+                totalLeads: 200,
+                successfulLeads: 80,
+                createdAt: new Date("2023-12-01"),
+                responseRate: 40,
+            },
+        ];
+
+        return NextResponse.json({ 
+            items: mockCampaigns, 
+            nextCursor: null 
+        });
+    }
+
     const { searchParams } = new URL(req.url);
     const parsed = CampaignsQuerySchema.safeParse(Object.fromEntries(searchParams));
     if (!parsed.success) return NextResponse.json({ error: "Invalid query" }, { status: 400 });
@@ -61,6 +102,12 @@ export async function POST(req: NextRequest) {
     const name = (body?.name ?? "").trim();
     const ownerId = typeof body?.ownerId === "string" ? body.ownerId : undefined;
     if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    
+    // If no database URL, return mock response
+    if (!process.env.DATABASE_URL) {
+        return NextResponse.json({ id: Math.floor(Math.random() * 1000) + 100 });
+    }
+    
     const [row] = await db
         .insert(campaigns)
         .values({ name, status: "draft", ownerId })
