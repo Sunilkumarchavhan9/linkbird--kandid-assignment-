@@ -14,9 +14,21 @@ export default function RegisterPage() {
 		e.preventDefault();
 		setLoading(true);
 		setError(undefined);
-		const res = await authClient.signUp.email({ name, email, password, callbackURL: "/dashboard" });
-		if (res.error) setError(res.error.message);
-		setLoading(false);
+		
+		try {
+			const res = await authClient.signUp.email({ name, email, password, callbackURL: "/dashboard" });
+			if (res.error) {
+				setError(res.error.message);
+			} else if (res.data) {
+				// Redirect to dashboard on success
+				window.location.href = "/dashboard";
+			}
+		} catch (error) {
+			console.error("Registration error:", error);
+			setError("An error occurred during registration. Please try again.");
+		} finally {
+			setLoading(false);
+		}
 	}
 
 	return (

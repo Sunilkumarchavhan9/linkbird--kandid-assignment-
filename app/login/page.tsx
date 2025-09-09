@@ -13,9 +13,21 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         setError(undefined);
-        const res = await authClient.signIn.email({ email, password, callbackURL: "/dashboard" });
-        if (res.error) setError(res.error.message);
-        setLoading(false);
+        
+        try {
+            const res = await authClient.signIn.email({ email, password, callbackURL: "/dashboard" });
+            if (res.error) {
+                setError(res.error.message);
+            } else if (res.data) {
+                // Redirect to dashboard on success
+                window.location.href = "/dashboard";
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            setError("An error occurred during login. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (

@@ -10,6 +10,9 @@ const resolvedBaseUrl = typeof window !== "undefined"
 
 export const authClient = createAuthClient({
     baseURL: resolvedBaseUrl,
+    fetchOptions: {
+        credentials: "include",
+    },
 });
 
 
