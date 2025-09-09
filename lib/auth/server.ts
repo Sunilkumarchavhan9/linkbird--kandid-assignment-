@@ -18,6 +18,12 @@ function resolveSecret() {
 export const auth = betterAuth({
 	baseURL: resolveBaseURL(),
 	secret: resolveSecret(),
+	trustedOrigins: [
+		"http://localhost:3000",
+		"https://localhost:3000",
+		...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+		...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+	],
 	database: process.env.DATABASE_URL ? drizzleAdapter(db, {
 		provider: "pg",
 		schema: authSchema,
